@@ -41,6 +41,22 @@ pipeline {
 
     // Note: Add gating stage here
 
+    stage ('Manual Ready Check') {
+      agent none
+      when {
+        branch 'master'
+      }
+      options {
+        timeout(time: 30, unit: 'MINUTES')
+      }
+      input {
+        message 'Deploy to Production?'
+      }
+      steps {
+        echo "Deploying"
+      }
+    }
+
     // Note: Add prod stage here
 
   }
