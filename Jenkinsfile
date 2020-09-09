@@ -19,6 +19,26 @@ pipeline {
 
     // Note: Add deploy stage here
 
+    stage("Deploy to Staging") {
+      agent {
+        label "lead-toolchain-skaffold"
+      }
+      when {
+          branch 'master'
+      }
+      environment {
+        ISTIO_DOMAIN = "${env.stagingDomain}"
+        PRODUCT_NAME = "${env.product}"
+      }
+      steps {
+        container('skaffold') {
+          unstash 'build'
+          sh "skaffold deploy -a image.json -n ${env.stagingNamespace}"
+          stageMessage "Successfully deployed to staging:\nspringtrader-${env.product}.${env.stagingDomain}/spring-nanotrader-web/"
+        }
+      }
+    }
+
     // Note: Add gating stage here
 
     // Note: Add prod stage here
